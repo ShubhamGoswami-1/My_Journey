@@ -1,5 +1,6 @@
 class Solution {
 public:
+    /*
     // its an O(nlogn) solution ....m looking for O(n)... Is it Possible ?
     int removeElement(vector<int>& nums, int val) {
         /*
@@ -24,6 +25,20 @@ public:
         }
         for(i=pos+count1;i<nums.size();i++){
             nums[pos++]=nums[i];
+        }
+        return nums.size()-count1;
+    }   
+    */
+    // its an O(n) solution ....its Possible ! :)
+    int removeElement(vector<int>& nums, int val) {
+        int count1=0,i;
+        for(i=0;i<nums.size();i++){
+            if(nums[i]==val){
+               ++count1;
+            }
+            else{
+                nums[i-count1]=nums[i];
+            }
         }
         return nums.size()-count1;
     }   
