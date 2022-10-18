@@ -21,25 +21,22 @@
  */
 class Solution {
 public:
-    TreeNode *Solve(ListNode*& head,int n){
-        if(n <= 0){
+    TreeNode *Solve(vector<int>v,int start,int end){
+        if(start > end){
             return NULL;
         }
-        TreeNode *left = Solve(head,n/2);
-        TreeNode *root = new TreeNode(head->val);
-        root->left = left;
-        head = head->next;
-        root->right = Solve(head,n-(n/2)-1);
+        int mid = (start + end)/2;
+        TreeNode *root = new TreeNode(v[mid]);
+        root->left = Solve(v,start,mid-1);
+        root->right = Solve(v,mid+1,end);
         return root;
     }
     TreeNode* sortedListToBST(ListNode* head) {
-        int n=0;
-        ListNode *curr = head;
-        while(curr != NULL){
-            ++n;
-            curr = curr->next;
+        vector<int>v;
+        for( ; head!= NULL ; head = head->next){
+            v.push_back(head->val);
         }
-        TreeNode *root = Solve(head,n);
+        TreeNode *root = Solve(v,0,v.size()-1);
         return root;
     }
 };
