@@ -12,60 +12,40 @@
 class Solution {
 public:
     bool findTarget(TreeNode* root, int k) {
-        
-        stack<TreeNode *>s1,s2;
-        bool done1 = false, done2 = false;
-        int val1,val2;
-        TreeNode *curr1 = root, *curr2 = root;
-        while(true){
-            while(done1 == false){
-                if(curr1 != NULL){
-                    s1.push(curr1);
-                    curr1 = curr1->left;
-                }
-                else{
-                    if(s1.empty()){
-                        done1 = true;
-                    }
-                    else{
-                        curr1 = s1.top();
-                        s1.pop();
-                        val1 = curr1->val;
-                        done1 = true;
-                        curr1 = curr1->right;
-                    }
-                }
-            }
-            while(done2 == false){
-                if(curr2 != NULL){
-                    s2.push(curr2);
-                    curr2 = curr2->right;
-                }
-                else{
-                    if(s2.empty()){
-                        done2 = true;
-                    }
-                    else{
-                        curr2 = s2.top();
-                        s2.pop();
-                        val2 = curr2->val;
-                        done2 = true;
-                        curr2 = curr2->left;
-                    }
-                }
-            }
-            if(val1 != val2 && (val1 + val2) == k){
+        stack<TreeNode *>it1,it2;
+        TreeNode *c = root;
+        while(c != NULL){
+            it1.push(c);
+            c = c->left;
+        }
+        c = root;
+        while(c != NULL){
+            it2.push(c);
+            c = c->right;
+        }
+        while(it1.top() != it2.top()){
+            int v1 = it1.top()->val;
+            int v2 = it2.top()->val;
+            if((v1 + v2) == k){
                 return true;
             }
-            else if((val1 + val2) < k){
-                done1 = false;
+            if((v1 + v2) < k){
+                c = it1.top()->right;
+                it1.pop();
+                while(c != NULL){
+                    it1.push(c);
+                    c = c->left;
+                }
             }
-            else if((val1 + val2) > k){
-                done2 = false;
-            }
-            if(val1 >= val2){
-                return false;
+            else{
+                c = it2.top()->left;
+                it2.pop();
+                while(c != NULL){
+                    it2.push(c);
+                    c = c->right;
+                }
             }
         }
+        return false;
     }
 };
