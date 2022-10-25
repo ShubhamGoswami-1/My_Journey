@@ -9,50 +9,58 @@
  */
 class Solution {
 public:
-    void SolveDown(TreeNode *root,int k,vector<int>&res){
-        if(root == NULL || k < 0){
-            return ;
-        }
-        if(k == 0){
-            res.push_back(root->val);
-            return;
-        }
-        SolveDown(root->left,k-1,res);
-        SolveDown(root->right,k-1,res);
-    }
-    int Solve(TreeNode *root,TreeNode *target,int k,vector<int>&res){
-        if(root == NULL){
-            return -1;
-        }
-        if(root == target){
-            SolveDown(root,k,res);
-            return 0;
-        }
-        int dl = Solve(root->left,target,k,res);
-        if(dl != -1){
-            if(dl+1 == k){
-                res.push_back(root->val);
+    void parent(TreeNode *root,unordered_map<TreeNode *,TreeNode *>&parent_track){
+        queue<TreeNode *>q;
+        q.push(root);
+        while(!q.empty()){
+            TreeNode *curr = q.front();
+            q.pop();
+            if(curr->left != NULL){
+                parent_track[curr->left] = curr;
+                q.push(curr->left);
             }
-            else{
-                SolveDown(root->right,k-dl-2,res);
+            if(curr->right != NULL){
+                parent_track[curr->right] = curr;
+                q.push(curr->right);
             }
-            return dl+1;
         }
-        int dr = Solve(root->right,target,k,res);
-        if(dr != -1){
-            if(dr+1 == k){
-                res.push_back(root->val);
-            }
-            else{
-                SolveDown(root->left,k-dr-2,res);
-            }
-            return dr+1;
-        }
-        return -1;
     }
     vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        unordered_map<TreeNode *,TreeNode *>parent_track;
+        unordered_map<TreeNode *,bool>visited;
+        parent(root,parent_track);
+        queue<TreeNode *>q;
+        q.push(target);
+        visited[target] = true;
+        int curr_level = 0;
+        while(!q.empty()){
+            int sz = q.size();
+            if(curr_level++ == k){
+                break;
+            }
+            for(int i = 0;i<sz;i++){
+                TreeNode *curr = q.front();
+                q.pop();
+                if(curr->left != NULL && !visited[curr->left]){
+                    visited[curr->left] = true;
+                    q.push(curr->left);
+                }
+                if(curr->right != NULL && !visited[curr->right]){
+                    visited[curr->right] = true;
+                    q.push(curr->right);
+                }
+                if(parent_track[curr] && !visited[parent_track[curr]]){
+                    visited[parent_track[curr]] = true;
+                    q.push(parent_track[curr]);
+                }
+            }
+        }
         vector<int>res;
-        Solve(root,target,k,res);
+        while(!q.empty()){
+            auto x = q.front();
+            q.pop();
+            res.push_back(x->val);
+        }
         return res;
     }
 };
